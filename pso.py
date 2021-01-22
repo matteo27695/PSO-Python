@@ -29,7 +29,7 @@ class Particle:
 
 
 class Swarm:
-    def __init__(self, num_particles, n_iterations, dimspace, tolerance=0.0001, w_inertia=0.5, w_cogn=0.8, w_soci=0.9):
+    def __init__(self, obj_fun, num_particles, n_iterations, dimspace, tolerance=0.0001, w_inertia=0.5, w_cogn=0.8, w_soci=0.9):
         self.w_inertia = w_inertia
         self.w_cogn = w_cogn
         self.w_soci = w_soci
@@ -40,15 +40,14 @@ class Swarm:
         self.gbest_val = [np.inf]
         self.num_particles = num_particles
         self.particles = []
+        self.obj_fun = obj_fun
 
     def init_particles(self):
         for i in range(self.num_particles):
             self.particles.append(Particle(self.dimspace))
 
     def fitness(self, particle):
-        x = particle.pos[0]
-        y = particle.pos[1]
-        return x ** 2 + y ** 2
+        return self.obj_fun(particle.pos)
 
     def upd_pbest(self):
         for particle in self.particles:
@@ -92,6 +91,14 @@ class Swarm:
             f"The best position is: {self.gbest_pos} with value: {self.gbest_val[-1]}, in iteration number: {i}")
 
 
+def example_fun(pos):
+    x = pos[0]
+    y = pos[1]
+    z = pos[2]
+    return x ** 2 + y ** 2 + z ** 2
+
+
 if __name__ == "__main__":
-    swarm = Swarm(num_particles=20, dimspace=2, n_iterations=100)
+
+    swarm = Swarm(obj_fun=example_fun, num_particles=20, dimspace=3, n_iterations=100)
     swarm.run()
